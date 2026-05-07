@@ -1,7 +1,7 @@
 # Laporan Praktikum 1: PHP Framework (CodeIgniter 4)
 
 **Mata Kuliah:** Pemrograman Web 2  
-**Dosen Pengampu:** Donny Maulana, S.Kom., M.M.S.I.
+**Dosen Pengampu:** Agung Nugroho, S.Kom., M.Kom., S.Kom., M. Kom
 
 ## Identitas Mahasiswa
 * **Nama:** Rizky Maulana
