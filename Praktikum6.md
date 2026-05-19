@@ -1,7 +1,4 @@
 
-<div align="center">
-  <img src="https://codeigniter.com/assets/images/ci-logo-big.png" alt="CodeIgniter 4 Logo" width="150"/>
-  
   # 🗂️ Laporan Praktikum 6: Relasi Tabel dan Query Builder
   
   ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
