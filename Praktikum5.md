@@ -1,6 +1,4 @@
 
-<div align="center">
-  <img src="https://codeigniter.com/assets/images/ci-logo-big.png" alt="CodeIgniter 4 Logo" width="150"/>
   
   # 🔍 Laporan Praktikum 5: Paginasi & Pencarian (Search)
   
@@ -9,15 +7,6 @@
   ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
   ![UI/UX](https://img.shields.io/badge/Pagination_&_Search-success?style=for-the-badge)
 </div>
-
----
-
-## 👨‍💻 Identitas Mahasiswa
-* **Nama:** Rizky Maulana
-* **NIM:** 312410430
-* **Kelas:** I241C
-* **Mata Kuliah:** Pemrograman Web 2
-* **Dosen Pengampu:** Donny Maulana, S.Kom., M.M.S.I.
 
 ---
 
