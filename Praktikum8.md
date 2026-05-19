@@ -1,6 +1,4 @@
 
-<div align="center">
-  <img src="https://codeigniter.com/assets/images/ci-logo-big.png" alt="CodeIgniter 4 Logo" width="150"/>
   
   # ⚡ Laporan Praktikum 8: Implementasi AJAX
   
