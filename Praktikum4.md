@@ -1,6 +1,6 @@
 
-<div align="center">
-  <img src="https://codeigniter.com/assets/images/ci-logo-big.png" alt="CodeIgniter 4 Logo" width="150"/>
+  <img width="231" height="53" alt="logo codelnighter" src="https://github.com/user-attachments/assets/5472efba-6f09-4a50-b536-f6f608878912" />
+
   
   # 🔐 Laporan Praktikum 4: Modul Login & Autentikasi (Filters)
   
