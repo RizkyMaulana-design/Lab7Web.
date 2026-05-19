@@ -1,111 +1,78 @@
 
-  # 📸 Laporan Praktikum 6: Fitur Upload Gambar pada Artikel
+<div align="center">
+  <img src="https://codeigniter.com/assets/images/ci-logo-big.png" alt="CodeIgniter 4 Logo" width="150"/>
+  
+  # 🗂️ Laporan Praktikum 6: Relasi Tabel dan Query Builder
   
   ![PHP](https://img.shields.io/badge/PHP-777BB4?style=for-the-badge&logo=php&logoColor=white)
   ![CodeIgniter 4](https://img.shields.io/badge/CodeIgniter_4-EF4223?style=for-the-badge&logo=codeigniter&logoColor=white)
   ![MySQL](https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white)
-  ![Backend](https://img.shields.io/badge/File-Upload-blue?style=for-the-badge)
+  ![Database](https://img.shields.io/badge/Database-One--to--Many-success?style=for-the-badge)
 </div>
+
+
 
 ---
 
 ## 📋 Daftar Isi
 1. [🎯 Tujuan Praktikum](#1-tujuan-praktikum)
-2. [🗄️ Perubahan Struktur Database & Model](#2-perubahan-struktur-database--model)
-3. [📝 Modifikasi Form Tambah Artikel (Multipart Data)](#3-modifikasi-form-tambah-artikel-multipart-data)
-4. [⚙️ Logika Validasi & Pemindahan File di Controller](#4-logika-validasi--pemindahan-file-di-controller)
-5. [🖥️ Menampilkan Gambar di Sisi Admin dan Publik](#5-menampilkan-gambar-di-sisi-admin-dan-publik)
+2. [🗄️ Pembuatan Tabel Kategori & Relasi](#2-pembuatan-tabel-kategori--relasi)
+3. [🧩 Pembuatan Model & Query Builder](#3-pembuatan-model--query-builder)
+4. [⚙️ Modifikasi Controller](#4-modifikasi-controller)
+5. [🖥️ Modifikasi View](#5-modifikasi-view)
 6. [📸 Hasil Akhir (Screenshot)](#6-hasil-akhir-screenshot)
 
 ---
 
 ## 1. 🎯 Tujuan Praktikum
-Praktikum ini berfokus pada pengembangan fitur penanganan berkas (*file handling*), yaitu memberikan kemampuan bagi Administrator untuk mengunggah berkas gambar ilustrasi saat membuat artikel baru. Berkas yang diunggah akan divalidasi, diubah namanya secara acak (untuk menghindari duplikasi), disimpan ke dalam direktori server lokal, dan nama berkasnya dicatat ke dalam database.
+Praktikum ini bertujuan untuk memahami dan mengimplementasikan konsep **Relasi Tabel (One-to-Many)** di dalam *database* serta mempraktikkan penggunaan **Query Builder** CodeIgniter 4 untuk melakukan *Join* tabel secara efisien tanpa harus menulis query SQL manual secara panjang lebar.
 
 ---
 
-## 2. 🗄️ Perubahan Struktur Database & Model
-
-### 🗜️ SQL Alter Table
-Menambahkan kolom `gambar` ke dalam tabel `artikel` setelah kolom `slug`:
-```sql
-ALTER TABLE artikel ADD gambar VARCHAR(255) NULL AFTER slug;
-
-```
-
-### 🧩 Pembaruan Model (`app/Models/ArtikelModel.php`)
-
-Mendaftarkan properti `'gambar'` ke dalam array `$allowedFields` agar diizinkan oleh sistem keamanan *Mass Assignment* CodeIgniter 4.
-
-```php
-protected $allowedFields = ['judul', 'isi', 'status', 'slug', 'gambar'];
-
-```
+## 2. 🗄️ Pembuatan Tabel Kategori & Relasi
+Langkah pertama adalah membuat tabel `kategori` sebagai tabel referensi (Master) dan menambahkan relasi *Foreign Key* ke tabel `artikel`.
+* **Tabel Kategori:** Memiliki kolom `id_kategori` (PK), `nama_kategori`, dan `slug_kategori`.
+* **Tabel Artikel:** Ditambahkan kolom `id_kategori` sebagai *Foreign Key* yang mereferensikan tabel kategori.
 
 ---
 
-## 3. 📝 Modifikasi Form Tambah Artikel (Multipart Data)
-
-Agar formulir HTML dapat mengirimkan berkas biner (gambar), atribut `enctype="multipart/form-data"` wajib disisipkan ke dalam tag `<form>` pada file `app/Views/artikel/form_add.php`.
-
-```html
-<form action="" method="post" enctype="multipart/form-data">
-    <p>
-        <label><b>Upload Gambar Ilustrasi:</b></label><br><br>
-        <input type="file" name="gambar">
-    </p>
-    <p><input type="submit" value="Kirim Artikel" class="btn btn-large"></p>
-</form>
-
-```
+## 3. 🧩 Pembuatan Model & Query Builder
+* **KategoriModel:** Dibuat untuk merepresentasikan tabel `kategori`.
+* **ArtikelModel:** Ditambahkan method khusus `getArtikelDenganKategori()` yang memanfaatkan *Query Builder* `->join()` untuk menggabungkan data artikel dengan nama kategorinya dari tabel `kategori`.
 
 ---
 
-## 4. ⚙️ Logika Validasi & Pemindahan File di Controller
-
-Proses penangkapan berkas dilakukan menggunakan method `$this->request->getFile('gambar')`. Jika berkas valid, namanya akan diacak menggunakan `$file->getRandomName()` dan dipindahkan ke folder target `public/uploads/`.
-
-### 🎮 Cuplikan Logika `app/Controllers/Artikel.php`
-
-```php
-$file = $this->request->getFile('gambar');
-$fileName = '';
-
-if ($file && $file->isValid() && !$file->hasMoved()) {
-    $fileName = $file->getRandomName();
-    $file->move(ROOTPATH . 'public/uploads', $fileName);
-}
-
-$artikel->insert([
-    'judul'  => $this->request->getPost('judul'),
-    'isi'    => $this->request->getPost('isi'),
-    'slug'   => url_title($this->request->getPost('judul'), '-', true),
-    'gambar' => $fileName,
-]);
-
-```
+## 4. ⚙️ Modifikasi Controller
+File `Artikel.php` diperbarui agar dapat menangani data relasi:
+* Mengirimkan data daftar kategori ke halaman Form Tambah dan Form Edit untuk dimuat ke dalam elemen `<select>` (Dropdown).
+* Memproses dan memvalidasi input `id_kategori` saat data artikel baru disimpan atau diperbarui.
+* Menambahkan fitur filter artikel berdasarkan ID Kategori pada Dasbor Admin.
 
 ---
 
-## 5. 🖥️ Menampilkan Gambar di Sisi Admin dan Publik
-
-### 🛠️ Pada Dashboard Admin (`admin_index.php`)
-
-Gambar ditampilkan dalam bentuk *thumbnail* kecil (ukuran lebar 100px) menggunakan fungsi pembantu `base_url('uploads/' . $row['gambar'])`. Jika artikel tidak memiliki gambar, sistem akan menampilkan teks alternatif secara dinamis.
-
-### 🌐 Pada Halaman Publik (`index.php` & `detail.php`)
-
-Gambar dirender secara dinamis di atas teks konten dengan properti CSS yang responsif (`max-width: 100%; height: auto;`) agar proporsional di berbagai ukuran layar device.
+## 5. 🖥️ Modifikasi View
+Antarmuka disesuaikan untuk menampilkan dan menerima data kategori:
+* **Form Add & Edit:** Ditambahkan elemen `<select>` dropdown dinamis yang me-*looping* data dari `KategoriModel`.
+* **Dasbor Admin:** Ditambahkan kolom "Kategori" pada tabel untuk menampilkan nama kategori hasil *Join*, serta fitur Filter pencarian berdasarkan Kategori.
 
 ---
 
 ## 6. 📸 Hasil Akhir (Screenshot)
 
-### 📌 Upload Sukses & Tampil di Tabel Dashboard Admin
+### 📌 Dasbor Admin (Dengan Kolom Kategori)
 
+<img width="1920" height="532" alt="p6_kategori_table" src="https://github.com/user-attachments/assets/d33d5b93-9762-4255-9f61-a6c6a7682d67" />
 
-<img width="1920" height="553" alt="Upload foto" src="https://github.com/user-attachments/assets/e56cf2f5-da3a-4acf-be57-a6db683b9334" />
+*Gambar: Dasbor admin menampilkan artikel lengkap dengan relasi nama kategori hasil Query Builder.*
 
 ---
+<div align="center">
+  <b>&copy; 2026 Rizky Maulana | NIM: 312410430</b><br>
+  <i>Laporan Praktikum Web 2 - Universitas Pelita Bangsa</i>
+</div>
 
+```
 
+Nah, laporan *readme* kamu sekarang sudah lengkap semua dari modul 1 sampai 8.
+
+Untuk penulisan *coding* Praktikum 6 (menambah tabel kategori dan menyesuaikan *dropdown* kategori) ini, apakah mau kita kerjakan sekarang biar programmu tidak *error* saat nanti diuji coba oleh dosen, atau kamu mau lompat menyelesaikan Praktikum 9 (AJAX Pagination) dulu malam ini?
